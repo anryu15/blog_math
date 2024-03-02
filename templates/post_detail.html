@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h2 class="my-4">{{ post_data.title }}</h2>
+        <hr>
+        <p>{{ post_data.content|linebreaksbr }}</p>
+        {% if img_url %}
+            <img id="uploadedImage" src="{{ img_url }}" alt="現在の画像">
+        {% endif %}
+    </div>
+    <div class="card-footer text-muted">
+        <p>{{ post_data.category }} : {{ post_data.subcategory }}</p>    
+        <p>{{ post_data.created|date:"Y年n月j日" }} by {{ post_data.author }}</p>
+        {% if user.is_authenticated %}
+            <hr>
+           
+        {% if login_user == post_data.author %}
+            <a href="{% url 'post_edit' post_data.id %}" class="btn btn-warning mr-2">編集する</a>
+            <a href="{% url 'post_delete' post_data.id %}" class="btn btn-danger">削除する</a>
+        {% endif %}
+            <button onclick="toggleLike()" id="likeBtn" class="btn ml-2 {% if user in post_data.likes.all %}btn-primary{% else %}btn-info{% endif %}">
+                Good{{ likes_count }}
+            </button>
+            
+        {% endif %}
+            
+    </div>
+</div>
+
+<div class="card mb-4">
+    {% if comment_data_list %}
+            {% for comment_data in comment_data_list %}
+                <div class="card-body">
+                    <br>
+                    <p>{{ comment_data.0.content|linebreaksbr }}</p>
+                    {% if comment_data.0.img %}
+                        <img id="uploadedImage" src="{{ comment_data.0.img.url }}" alt="現在の画像">
+                    {% endif %}
+                </div>
+                <div class="card-footer text-muted">
+                    <p>{{ comment_data.0.posted_date|date:"Y年n月j日" }} by {{ comment_data.0.author }}</p>
+                    <hr>                    
+                    {% if login_user == comment_data.0.author %}   
+                        <a href="{% url 'comment_edit' comment_data.0.id %}" class="btn btn-warning mr-2 btn-sm">編集する</a>
+                        <a href="{% url 'comment_delete' comment_data.0.id %}" class="btn btn-danger btn-sm">削除する</a>
+                    {% endif %}
+                    <button onclick="toggleGoodComment(this)" id="goodCommentBtn" data-comment-id="{{ comment_data.0.id }}" class="btn ml-2 {% if user in comment_data.0.goods.all %} btn-primary{% else %}btn-info{% endif %} btn-sm">
+                        Good{{ comment_data.0.good_count }}
+                    </button>
+                    <button onclick="toggleBadComment(this)" id="badCommentBtn" data-comment-id="{{ comment_data.0.id }}" class="btn ml-2 {% if user in comment_data.0.bads.all %} btn-primary{% else %}btn-info{% endif %} btn-sm">
+                        Bad{{ comment_data.0.bad_count }}
+                    </button>
+                </div>
+            {% endfor %}
+        
+    {% endif %}
+</div>
+
+
+{% if user.is_authenticated %}
+    <hr>
+    <div class="d-flex mb-5">
+        <a href="{% url 'add_comment' post_data.id %}" class="btn btn-danger">コメントする</a>
+    </div>
+{% endif %}
+
+<!-- MathJaxの設定 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+        },
+        CommonHTML: { matchFontHeight: false }
+    });
+</script>
+
+<script>
+    function toggleLike() {
+        const likeBtn = document.getElementById('likeBtn');
+
+        fetch('{% url 'like_post' post_data.id %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('いいねが増えました:', data.likes_count);
+            // いいねボタンのクラスを切り替える
+            likeBtn.classList.toggle('liked');
+            location.reload();
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    function toggleGoodComment(button) {
+        const commentId = button.getAttribute('data-comment-id');
+        
+        fetch('{% url 'good_comment' 0 %}'.replace('0', commentId), {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('いいねが増えました:', data.likes_count);
+            // いいねボタンのクラスを切り替える
+            likeBtn.classList.toggle('liked');
+            location.reload();
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    
+    function toggleBadComment(button) {
+        const commentId = button.getAttribute('data-comment-id');
+        fetch('{% url 'bad_comment' 0 %}'.replace('0', commentId), {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('いいねが増えました:', data.likes_count);
+            // いいねボタンのクラスを切り替える
+            likeBtn.classList.toggle('liked');
+            location.reload();
+        })
+        .catch(error => console.error('Error:', error));
+    }
+</script>
+
+{% endblock %}
+

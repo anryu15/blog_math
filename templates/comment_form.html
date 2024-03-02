@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+<h2 class="my-4">{{ post_data.title }}</h2>
+<hr>
+<p>{{ post_data.created }} by {{ post_data.author }}</p>
+<hr>
+<p>{{ post_data.content|linebreaksbr }}</p>
+{% if img_url %}
+    <img id="uploadedImage" src="{{ img_url }}" alt="現在の画像">
+{% endif %}
+<hr>
+<p>{{ post_data.category }} : {{ post_data.subcategory }}</p>
+
+
+<div class="my-4">
+    <h2>コメント</h2>
+</div>
+
+<form method="post" class="post-form" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="formpost">
+        {% render_field form.content class="control" placeholder="コメントを入力" %}
+    </div>
+    <div class="formpost">
+        {{ form.img }}{{ form.img.errors }}
+    </div>
+    <div id="imagePreview" class="formpost" style="display: none;">
+        <img id="previewImage" src="#" alt="画像プレビュー" style="max-width: 100%; max-height: 200px;">
+    </div>
+    
+    <button class="btn btn-warning" type="submit">投稿する</button>
+</form>
+
+
+<!-- MathJaxの設定 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+        },
+        CommonHTML: { matchFontHeight: false }
+    });
+</script>
+
+{% endblock %}

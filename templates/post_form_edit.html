@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="my-4">
+    <h2>投稿</h2>
+</div>
+
+<form method="post" id="postForm" enctype="multipart/form-data" action="{% url 'post_edit' post_data.id %}">
+    {% csrf_token %}
+
+    <div class="formpost">
+        {% render_field form.title class="form-control" placeholder="タイトルを入力" %}
+    </div>
+    <div class="formpost">
+        {% render_field form.content class="form-control" placeholder="本文を入力" %}
+    </div>
+    <div class="formpost" id="customMessage" style="display: none;">
+        {{ form.img }}{{ form.img.errors }}
+    </div>
+
+    {% if img_url %}
+        <button type="button" id="customButton">画像を変更する</button>
+    {% else %}
+        <button type="button" id="customButton">画像を追加する</button>
+    {% endif %}
+
+    <div id="imagePreview" class="formpost" style="display: none;">
+        <img id="previewImage" src="#" alt="画像プレビュー" style="max-width: 100%; max-height: 200px;">
+    </div>
+
+    {% if img_url %}
+        <img id="uploadedImage" src="{{ img_url }}" alt="現在の画像">
+    {% endif %}
+
+    <div class="formpost">
+        <select name="category_element" id="category_element" required>
+            <option value="">範囲を選択</option>
+            {% for Category in categoryList %}
+                <option value="{{ Category.name }}" {% if Category.name == selected_category %} selected {% endif %}>
+                    {{ Category.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <select name="subcategory_element" id="subcategory_element" required>
+            <option value="">単元を選択</option>
+            {% if selected_category %}
+                {% for subcategory in subcategoryList %}
+                    {% if selected_category == subcategory.category.name %}
+                        <option value="{{ subcategory.name }}" {% if subcategory.name == selected_subcategory %}selected{% endif %}>
+                            {{ subcategory.name }}
+                        </option>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </select>
+    </div>
+
+    <button class="btn btn-warning" type="submit" id="submitButton">投稿する</button>
+</form>
+
+
+<script>
+    document.getElementById('customButton').onclick = function () {
+        document.getElementById('customMessage').style.display = 'block';
+    };
+
+    document.getElementById('category_element').onchange = function () {
+        var categoryName = this.value;
+        var versionArray = {'': ['単元を選択']};
+        {% for Category in categoryList %}
+            versionArray['{{ Category.name }}'] = [
+                {% for subcategory in subcategoryList %}
+                    {% if Category.id == subcategory.category.id %}
+                        '{{ subcategory.name }}',
+                    {% endif %}
+                {% endfor %}
+            ];
+        {% endfor %}
+
+        setSubcategoryArray(categoryName, versionArray);
+    };
+
+    document.getElementById('id_img').addEventListener('change', function () {
+        showImagePreview(this);
+        document.getElementById('uploadedImage').style.display = 'none';
+    });
+
+    document.getElementById('changeImgButton').onclick = function () {
+        toggleImage();
+        var imgDiv = document.getElementById('insert_img');
+        imgDiv.style.display = (imgDiv.style.display === 'none' || imgDiv.style.display === '') ? 'block' : 'none';
+    };
+
+    function toggleImage() {
+        var imgDiv = document.getElementById('insert_img');
+        imgDiv.style.display = (imgDiv.style.display === 'none' || imgDiv.style.display === '') ? 'block' : 'none';
+    }
+
+</script>
+
+{% endblock %}

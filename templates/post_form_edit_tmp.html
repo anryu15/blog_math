@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+<div class="my-4">
+    <h2>投稿</h2>
+</div>
+
+<form method="post" id="postForm" enctype="multipart/form-data" action="{% url 'post_edit' post_data.id %}">
+    {% csrf_token %}
+    <div class="formpost">
+        {% render_field form.title class="form-control" placeholder="タイトルを入力" %}
+    </div>
+    <div class="formpost">
+        {% render_field form.content class="form-control" placeholder="本文を入力" %}
+    </div>
+    <div class="formpost">
+        
+    </div>
+    <div class="formpost" id="customMessage" style="display: none;" id="id_img">
+            {{ form.img }}{{ form.img.errors }}
+    </div>
+    <button type="button" id="customButton">画像を変更する</button>
+    <div id="imagePreview" class="formpost" style="display: none;">
+        <img id="previewImage" src="#" alt="画像プレビュー" style="max-width: 100%; max-height: 200px;">
+    </div>
+    {% if img_url %}
+        <img id="uploadedImage" src="{{ img_url }}" alt="現在の画像">
+    {% endif %}
+    
+    <div class="formpost">
+        <select name="category_element" id="category_element" required>
+            <option value="">範囲を選択</option>
+            {% for Category in categoryList %}
+                <option value="{{ Category.name }}" {% if Category.name == selected_category %} selected {% endif %}>{{ Category.name }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="subcategory_element" id="subcategory_element" required>
+            <option value="">単元を選択</option>
+            {% if selected_category %}
+                {% for subcategory in subcategoryList %}
+                    {% if selected_category == subcategory.category.name %}
+                        <option value="{{ subcategory.name }}" {% if subcategory.name == selected_subcategory %}selected{% endif %}>{{ subcategory.name }}</option>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </select>
+    </div>
+
+    <button class="btn btn-warning" type="submit" id="submitButton">投稿する</button>
+</form>
+
+<script>
+
+    document.getElementById('customButton').onclick = function () {
+        var customMessage = document.getElementById('customMessage');
+        customMessage.style.display = 'block';
+    };
+
+
+    document.getElementById('category_element').onchange = function () {
+        var categoryName = this.value;
+        let versionArray = new Array();
+        versionArray[''] = new Array('単元を選択');
+        {% for Category in categoryList %}
+            versionArray['{{ Category.name }}'] = new Array(
+                {% for subcategory in subcategoryList %}
+                    {% if Category.id == subcategory.category.id %}
+                        '{{ subcategory.name }}',
+                    {% endif %}
+                {% endfor %}
+            );
+            console.log("Category: {{ Category.name }}");
+        {% endfor %}
+
+        setSubcategoryArray(categoryName, versionArray);
+        checkFormValidity();
+    };
+
+    document.getElementById('subcategory_element').onchange = function () {
+        checkFormValidity();
+    };
+
+    document.getElementById('id_img').addEventListener('change', function () {
+        showImagePreview(this);
+        var image = document.getElementById('uploadedImage');
+        if (image) {
+            image.style.display = 'none';
+        }
+    });
+
+
+    document.getElementById('changeImgButton').onclick = function () {
+        toggleImage();
+        checkFormValidity();
+        alert("Hello,changeImgButton");
+        // 以下のコードを追加
+        var imgDiv = document.getElementById('insert_img');
+        imgDiv.style.display = (imgDiv.style.display === 'none' || imgDiv.style.display === '') ? 'block' : 'none';
+    };
+
+    document.getElementById('id_img').onchange = function (e) {
+        var input = e.target;
+        var previewImage = document.getElementById('previewImage');
+        var uploadedImage = document.getElementById('uploadedImage');
+        var imagePreview = document.getElementById('imagePreview');
+        var customMessage = document.getElementById('customMessage');
+        alert("Hello,id_img");
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                previewImage.src = e.target.result;
+                imagePreview.style.display = 'block';
+                uploadedImage.style.display = 'none'; // 新しい画像が選択されたら、アップロード済みの画像を非表示にする
+                customMessage.style.display = 'none';
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            // ファイルが選択されていない場合、アップロード済みの画像を再表示する
+            imagePreview.style.display = 'none';
+            uploadedImage.style.display = 'block';
+            customMessage.style.display = 'block';
+        }
+    };
+
+    function toggleImage() {
+        var imgDiv = document.getElementById('insert_img');
+        imgDiv.style.display = (imgDiv.style.display === 'none' || imgDiv.style.display === '') ? 'block' : 'none';
+    }
+
+    function checkFormValidity() {
+        // ここにフォームのバリデーションなどを追加できます。
+        // 例えば、画像が選択されているかどうかを確認するなど。
+    }
+</script>
+
+{% endblock %}

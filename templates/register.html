@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+ 
+<div class="row my-4">
+    <div class="col-md-8 offset-md-2">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title">サインアップ</h2>
+                <div class="formpost mb-3 error-message">
+                    {{ error_message }}
+                 </div>
+                <form enctype="multipart/form-data" method="post">
+                    {% csrf_token %}
+                    <div class="formpost mb-3">
+                        {% render_field account_form.username class="form-control" placeholder="ユーザー名" %}
+                    </div>
+                    <div class="formpost mb-3">
+                        {% render_field account_form.email class="form-control" placeholder="メールアドレス" %}
+                    </div>
+                    <div class="formpost mb-3">
+                        {% render_field account_form.password class="form-control" placeholder="パスワード" %}
+                    </div>
+                    <div class="formpost mb-3">
+                        {% render_field add_account_form.contents class="form-control" placeholder="紹介文" %}
+                    </div>
+                    <div class="text-center">
+                        <button class="btn btn-primary" type="submit">サインアップ</button>
+                    </div>
+                </form>
+            </div>        
+        </div>
+    </div>
+</div>
+
+   
+{% endblock %}

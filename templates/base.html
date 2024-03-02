@@ -1,0 +1,73 @@
+{% load static%}
+
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+        <link rel="stylesheet" typ="text/css" href="{%  static 'css/style.css' %}">
+        <script src="{% static 'js/script.js' %}"></script>
+
+        <script type="text/javascript" async
+            src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML">
+        </script>
+        
+        <title>数学質問アプリ</title>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="/">Math Up</a>
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">ホーム</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'description' %}">説明</a>
+                    </li>
+                    {% if login_user.id == 1 %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'post_new' %}">投稿</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'Logout' %}">ログアウト</a>
+                        </li>
+                    {% elif user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'mypage' login_user_id %}">マイページ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'post_new' %}">投稿</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'Logout' %}">ログアウト</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">サインアップ</a> 
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'Login' %}">ログイン</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+
+        <main>
+            <div class="container">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </main>
+
+        <footer class="py-2 bg-dark">
+            <p class="m-0 text-center text-white">Copyright &copy; Django Startup 2024</p>
+        </footer>
+
+        {% block extra_js %}
+        {% endblock %}
+
+    </body>
+</html>

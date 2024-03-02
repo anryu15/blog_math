@@ -1,0 +1,13 @@
+<div class="card mb-3">
+    <div class="card-header">
+      サブカテゴリ
+    </div>
+    <ul class="list-group list-group-flush">
+      {% for subcategory in subcategoryList %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <a href="{% url 'selected_subcategory' subcategory.0.name %}" class="card-link">{{ subcategory.0.name }}</a>
+        <span class="badge badge-primary badge-pill">{{ subcategory.0.post_count }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+</div>

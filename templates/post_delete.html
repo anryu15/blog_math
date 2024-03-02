@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="my-4">{{ post_data.title }}</h2>
+
+<h5 class="my-4">{{ post_data.content }}</h5>
+<hr>
+<h5 class="my-4">削除してもよろしいですか？</h5>
+<form method="post">
+    {% csrf_token %}
+    <button class="btn btn-danger" type="submit">削除する</button>
+</form>
+
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+        },
+        CommonHTML: { matchFontHeight: false }
+    });
+</script>
+
+{% endblock %}

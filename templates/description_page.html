@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+<div class="row my-4">
+    <div class="col-md-8 offset-md-2">
+        <div class="card mb-4">
+            <div class="card-body">
+                <title>数学質問サイトの説明</title>
+                
+                <div class="formpost mb-3">
+                    <h1 class="welcome-heading">ようこそ、Math Upへ!</h1>
+                </div>
+               
+                
+                    <p>数学でわからない問題を自由に聞くことができるコミュニティが欲しいと思い、このMath Upを作成しました。</p>
+                    
+                    <h4>特徴</h4>
+                    <p class="not_latex_output">数式を綺麗に出力することができます。例えば、xの二乗は本来 x^2 として出力されますが、\$x^{2}\$ にすることでxの二乗を整った数式で表示することができます。</p>
+                    <div class="container_description">
+                        <p class="latex_style">\$x^{2}\$  → </p>
+                        <p class="latex_style">$x^{2}$</p>
+                    </div>
+
+                    <p>質問する際は、数学の問題文や数式をわかりやすく入力し、他のユーザーが効果的に助けることができるようにしましょう。</p>
+                    
+                
+            </div>        
+        </div>
+    </div>
+</div>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        CommonHTML: { matchFontHeight: false }
+    });
+</script>
+
+{% endblock %}
