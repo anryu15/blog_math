@@ -32,3 +32,6 @@ git clone https://github.com/anryu15/blog_math.git
 3. ブラウザで以下のURLにアクセスしてサイトを確認します：
 
     [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+
+
+![image](https://github.com/anryu15/blog_math/assets/72866999/e1f0fc2e-766a-43d2-ad87-719d6f89a0a9)
